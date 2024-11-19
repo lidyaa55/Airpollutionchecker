@@ -24,6 +24,8 @@ const cities = [
   { name: "Nekemte", lat: 9.0833, lng: 36.5667 },
 ];
 
+let markers = [];
+
 // Initialize Leaflet map
 function initMap() {
   map = L.map("map").setView([9.03, 38.74], 6); // Centered on Addis Ababa
@@ -54,6 +56,9 @@ function initMap() {
               <p><strong>Status:</strong> ${status}</p>
             </div>
           `);
+
+          // Add marker to global markers array for search
+          markers.push({ name: city.name.toLowerCase(), marker });
         } else {
           console.error(`No data available for ${city.name}`);
         }
@@ -78,6 +83,19 @@ function getPollutionStatus(aqi) {
     return "Very Unhealthy";
   } else {
     return "Hazardous";
+  }
+}
+
+// Add city search functionality
+function searchCity() {
+  const query = document.getElementById("city-search").value.toLowerCase();
+  const result = markers.find((item) => item.name === query);
+
+  if (result) {
+    map.setView(result.marker.getLatLng(), 10); // Zoom to the city
+    result.marker.openPopup(); // Open the city's popup
+  } else {
+    alert("City not found. Please check the spelling.");
   }
 }
 
